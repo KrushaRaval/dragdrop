@@ -1,0 +1,156 @@
+<div cdkDropListGroup class="main">
+  <div class="example-container">
+    <h2>Drag</h2>
+    <div cdkDropList [cdkDropListData]="drag" class="example-list" (cdkDropListDropped)="task($event)">
+      <div class="example-box" *ngFor="let item of drag" cdkDrag (click)="addToDrop(item)">{{item}}</div>
+    </div>
+  </div>
+
+  <div class="example-container2">
+    <h2>Drop</h2>
+    <div cdkDropList [cdkDropListData]="drop" class="example-list2" (cdkDropListDropped)="task($event)"
+      (mouseenter)="toggleHover()" (mouseleave)="toggleHover()">
+      <div class="example-box" *ngFor="let item of drop" cdkDrag>{{item}}
+        <div class="action-icons" *ngIf="isHovered && editedItem !== 'Checkbox Group'">
+          <button (click)="editItem(item)" class="icon-button edit-icon" title="Edit">&#9998;</button>
+          <button (click)="copyItem(item)" class="icon-button copy-icon" title="Copy">&#128208;</button>
+          <button (click)="deleteItem(item)" class="icon-button delete-icon" title="Delete">&#10060;</button>
+          <button (click)="moveUp(item)" class="icon-button move-up-icon" title="Move Up">&#8593;</button>
+          <button (click)="moveDown(item)" class="icon-button move-down-icon" title="Move Down">&#8595;</button>
+        </div>
+
+        <!-- Autocomplete form -->
+        <div *ngIf="editedItem === 'Autocomplete'" class="autocomplete-form">
+          <form (ngSubmit)="save()">
+            <input type="text" id="autocompleteInput" [(ngModel)]="currentValue" name="autocompleteInput"><br>
+            <button type="button" (click)="addAutocomplete()">Add</button>
+            <button type="button" (click)="closeForm()" class="close">Close</button>
+          </form>
+        </div>
+
+        <!-- Button form -->
+        <div *ngIf="editedItem === 'Button'" class="button-form">
+          <form (ngSubmit)="save()">
+            <button type="button" (click)="buttonAction1()" class="submit">Submit</button>
+            <button type="button" (click)="buttonAction2()" class="reset">Reset</button><br>
+            <button type="button" (click)="closeForm()" class="close">Close</button>
+          </form>
+        </div>
+
+        <!-- Checkbox Group form -->
+        <div *ngIf="editedItem === 'Checkbox Group'" class="checkbox-form">
+          <form (ngSubmit)="save()">
+            <div *ngFor="let option of checkboxOptions">
+              <input type="checkbox" id="{{option.id}}" [(ngModel)]="checkboxValues[option.id]" name="{{option.id}}">
+              <label for="{{option.id}}">{{option.label}}</label>
+            </div>
+            <button type="button" (click)="addCheckboxOption()">Add</button>
+            <button type="button" (click)="closeForm()">Close</button>
+          </form>
+        </div>
+
+        <!-- Datepicker form -->
+        <div *ngIf="editedItem === 'Date Field'" class="datepicker-form">
+          <form (ngSubmit)="save()">
+            <label for="dateInput">Choose a date:</label>
+            <input type="date" id="dateInput" [(ngModel)]="currentValue" name="dateInput">
+            <button type="button" (click)="closeForm()" class="close">Close</button>
+          </form>
+        </div>
+
+        <!-- File Upload form -->
+        <div *ngIf="editedItem === 'File Upload'" class="file-upload-form">
+          <form (ngSubmit)="save()">
+            <label for="fileInput">Choose a file:</label>
+            <input type="file" id="fileInput" (change)="onFileSelected($event)" accept=".txt,.pdf,.doc,.docx"><br>
+            <button type="button" (click)="closeForm()" class="close">Close</button>
+          </form>
+        </div>
+
+        <!-- Header form -->
+        <div *ngIf="editedItem === 'Header'" class="header-form">
+          <form (ngSubmit)="save()">
+            <label for="headerSelect">Select Header Type:</label>
+            <select id="headerSelect" [(ngModel)]="selectedHeaderType" name="headerSelect">
+              <option value="h1">H1</option>
+              <option value="h2">H2</option>
+              <option value="h3">H3</option>
+              <option value="h4">H4</option>
+              <option value="h5">H5</option>
+              <option value="h6">H6</option>
+            </select>
+            <button type="button" (click)="closeForm()" class="close">Close</button>
+          </form>
+        </div>
+
+        <!-- Number form -->
+        <div *ngIf="editedItem === 'Number'" class="number-form">
+          <form>
+            <label for="numberInput">Enter a Number:</label>
+            <input type="number" id="numberInput" [(ngModel)]="numberValue" name="numberInput">
+            <button type="button" (click)="closeForm()" class="close">Close</button>
+          </form>
+        </div>
+
+        <!-- Paragraph form -->
+        <div *ngIf="editedItem === 'Paragraph'" class="paragraph-form">
+          <form>
+            <label for="paragraphTextarea">Edit Paragraph:</label>
+            <textarea id="paragraphTextarea" [(ngModel)]="paragraphText" name="paragraphTextarea"></textarea>
+            <button type="button" (click)="closeForm()" class="close">Close</button>
+          </form>
+        </div>
+
+        <!-- Radio Group form -->
+        <div *ngIf="editedItem === 'Radio Group'" class="radio-form">
+          <form (ngSubmit)="save()">
+            <div *ngFor="let option of radioOptions">
+              <input type="radio" id="{{option}}" name="radioOption" [(ngModel)]="selectedRadioOption" [value]="option">
+              <label for="{{option}}">{{option}}</label><br>
+            </div>
+            <button type="button" (click)="addRadioOption()">Add</button>
+            <button type="button" (click)="closeForm()">Close</button>
+          </form>
+        </div>
+
+        <!-- Select form -->
+        <div *ngIf="editedItem === 'Select'" class="select-form">
+          <form (ngSubmit)="save()">
+            <label for="selectOption">Select an option:</label>
+            <select id="selectOption" [(ngModel)]="selectedOption" name="selectOption">
+              <option *ngFor="let option of selectOptions" [value]="option">{{option}}</option>
+            </select>
+            <button type="button" (click)="addSelectOption()">Add</button>
+            <button type="button" (click)="closeForm()">Close</button>
+          </form>
+        </div>
+
+        <!-- Text Field form -->
+        <div *ngIf="editedItem === 'Text Field'" class="text-field-form">
+          <form>
+            <label for="textFieldInput">Enter Text:</label>
+            <input type="text" id="textFieldInput" [(ngModel)]="currentValue" name="textFieldInput">
+            <button type="button" (click)="addTextField()">Add</button>
+
+            <button type="button" (click)="closeForm()" class="close">Close</button>
+          </form>
+        </div>
+
+        <!-- Text Area form -->
+        <div *ngIf="editedItem === 'Text Area'" class="text-area-form">
+          <form>
+            <label for="textAreaInput">Enter Text:</label>
+            <textarea id="textAreaInput" [(ngModel)]="textAreaValue" name="textAreaInput"></textarea><br>
+            <button type="button" (click)="addTextarea()" class="add">Add</button>
+            <button type="button" (click)="closeForm()" class="close">Close</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+    <div class="button">
+      <button (click)="clear()" class="clear">Clear</button>
+      <button (click)="save()" class="save">Save</button>
+    </div>
+  </div>
+</div>
